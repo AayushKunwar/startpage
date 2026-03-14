@@ -28,12 +28,38 @@
             margin: 0 auto;
         }
 
+        .search {
+            margin-bottom: 40px;
+        }
+
+        .search input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            /*border-radius: 8px;*/
+            background: transparent;
+            color: #fff;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        .search input::placeholder {
+            color: #666;
+        }
+
+        .search input:focus {
+            box-shadow: 0 0 0 2px #4ecdc4;
+        }
+
         h1 {
             font-size: 1.2rem;
             font-weight: 500;
             margin-bottom: 35px;
             color: #aaa;
             letter-spacing: 2px;
+            padding: 0 5px;
         }
 
         .columns {
@@ -93,6 +119,12 @@
 </head>
 <body>
     <div class="container">
+        <div class="search">
+            <form action="https://duckduckgo.com/" method="get">
+                <input type="text" name="q" placeholder="Search..." autocomplete="off">
+            </form>
+        </div>
+        
         <h1>Links</h1>
         
         <div class="columns">
