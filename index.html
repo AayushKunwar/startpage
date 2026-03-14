@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Start Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #101010;
+            --bg-card: #101010;
+            --bg-card-hover: #222228;
+            --text-primary: #f0f0f2;
+            --text-secondary: #80808a;
+            --border: #2a2a30;
+            --hue: 180;
+            --accent: hsl(var(--hue), 70%, 60%);
+            --accent-dim: hsla(var(--hue), 70%, 60%, 0.5);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            background: var(--bg-primary);
+        }
+
+        .blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(300px);
+            will-change: transform;
+            opacity: 0.2;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 36px;
+            gap: 24px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .clock {
+            font-size: 2.64rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .date-greeting {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .date {
+            font-size: 0.96rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 400;
+        }
+
+        .greeting {
+            font-size: 1.08rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Search bar */
+        .search-container {
+            width: 480px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 54px 12px 19px;
+            font-size: 1.08rem;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .search-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .search-wrapper input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        .search-wrapper button {
+            position: absolute;
+            right: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .search-wrapper button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .search-wrapper button svg {
+            width: 19px;
+            height: 19px;
+            fill: #fff;
+        }
+
+        /* Main content */
+        main {
+            padding: 12px 36px 36px;
+        }
+
+        /* Category styling */
+        .category {
+            margin-bottom: 22px;
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .category-title {
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Links grid */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 6px;
+        }
+
+        .link-card {
+            /*background: rgba(255, 255, 255, 0.05);*/
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.2s ease;
+            /*border: 1px solid rgba(255, 255, 255, 0.1);*/
+            border: 1px solid rgba(255, 255, 255, 0);
+        }
+
+        .link-card:hover {
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-dim), 0 0 30px var(--accent-dim);
+        }
+
+        .link-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            font-size: 1.02rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .link-icon img {
+            display: none;
+        }
+
+        .link-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .link-title {
+            font-size: 1rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .link-url {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 12px;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.84rem;
+        }
+
+        footer kbd {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="blobs" id="blobs"></div>
+
+    <header>
+        <div class="header-left">
+            <div class="clock" id="clock">00:00</div>
+            <div class="date-greeting">
+                <div class="date" id="date">Loading...</div>
+                <div class="greeting" id="greeting">Hello!</div>
+            </div>
+        </div>
+        <div class="search-container">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Search the web..." autocomplete="off">
+                <button id="searchBtn">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainContent">
+    </main>
+
+    <footer>
+        Press <kbd>Tab</kbd> to focus search
+    </footer>
+
+    <script>
+        let hue = Math.floor(Math.random() * 360);
+
+        function updateHue() {
+            hue = (hue + 0.15) % 360;
+            document.documentElement.style.setProperty('--hue', hue);
+            requestAnimationFrame(updateHue);
+        }
+
+        updateHue();
+
+        const LINKS_CONFIG = `
+Dev:
+Stack Overflow https://stackoverflow.com
+MDN https://developer.mozilla.org
+npm https://npmjs.com
+CSS Tricks https://css-tricks.com
+
+News:
+Hacker News https://news.ycombinator.com #ff0000
+BBC https://bbc.com
+
+Tools:
+Can I Use https://caniuse.com
+Regex101 https://regex101.com
+JSON Formatter https://jsonformatter.org
+
+Social:
+Twitter https://twitter.com
+Reddit https://reddit.com
+LinkedIn https://linkedin.com
+
+Entertainment:
+YouTube https://youtube.com
+Netflix https://netflix.com
+Spotify https://spotify.com
+
+Search:
+Google https://google.com
+DuckDuckGo https://duckduckgo.com
+        `;
+
+        function parseLinks(config) {
+            const categories = [];
+            const lines = config.trim().split('\n');
+            
+            let currentCategory = null;
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                if (line.endsWith(':')) {
+                    if (currentCategory) {
+                        categories.push(currentCategory);
+                    }
+                    currentCategory = {
+                        name: line.slice(0, -1).trim(),
+                        links: []
+                    };
+                } else if (currentCategory) {
+                    const match = line.match(/^(.+?)\s+(https?:\/\/.+?)(?:\s+(#[0-9a-fA-F]{6}))?$/);
+                    if (match) {
+                        currentCategory.links.push({
+                            name: match[1].trim(),
+                            url: match[2].trim(),
+                            color: match[3] ? match[3].trim() : null
+                        });
+                    }
+                }
+            });
+            
+            if (currentCategory) {
+                categories.push(currentCategory);
+            }
+            
+            return categories;
+        }
+
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const h = Math.abs(hash) % 360;
+            return `hsl(${h}, 70%, 70%)`;
+        }
+
+        function renderLinks(categories) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = '';
+            
+            categories.forEach((category, catIndex) => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'category';
+                categoryEl.style.animationDelay = `${catIndex * 0.05}s`;
+                
+                const linksHtml = category.links.map((link) => {
+                    const letter = link.name.charAt(0).toUpperCase();
+                    const color = link.color ? link.color : stringToColor(link.name);
+                    return `
+                        <a href="${link.url}" class="link-card">
+                            <div class="link-icon" style="background: ${color};">${letter}</div>
+                            <div class="link-info">
+                                <div class="link-title">${link.name}</div>
+                                <div class="link-url">${new URL(link.url).hostname}</div>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+                
+                categoryEl.innerHTML = `
+                    <div class="category-header">
+                        <h2 class="category-title">${category.name}</h2>
+                    </div>
+                    <div class="links-grid">
+                        ${linksHtml}
+                    </div>
+                `;
+                
+                mainContent.appendChild(categoryEl);
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            document.getElementById('clock').textContent = `${hours}:${minutes} ${ampm}`;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+            
+            const hour = now.getHours();
+            let greeting = 'Hello!';
+            if (hour < 12) greeting = 'Good morning!';
+            else if (hour < 18) greeting = 'Good afternoon!';
+            else greeting = 'Good evening!';
+            document.getElementById('greeting').textContent = greeting;
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        const blobColors = [
+            ['#22d3d3', '#06b6d4'],
+            ['#8b5cf6', '#6366f1'],
+            ['#f472b6', '#db2777'],
+            ['#34d399', '#10b981'],
+            ['#fbbf24', '#f59e0b'],
+            ['#60a5fa', '#3b82f6'],
+        ];
+
+        const blobsContainer = document.getElementById("blobs");
+        const numBlobs = 5;
+        const blobs = [];
+
+        for (let i = 0; i < numBlobs; i++) {
+            const size = 200 + Math.random() * 200;
+            const blob = document.createElement("div");
+            blob.className = "blob";
+            blob.style.width = size + "px";
+            blob.style.height = size + "px";
+            
+            const colors = blobColors[Math.floor(Math.random() * blobColors.length)];
+            blob.style.background = `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`;
+            
+            blobsContainer.appendChild(blob);
+
+            blobs.push({
+                el: blob,
+                x: Math.random() * (window.innerWidth - size),
+                y: Math.random() * (window.innerHeight - size),
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: (Math.random() - 0.5) * 0.8,
+                size: size
+            });
+        }
+
+        function animate() {
+            blobs.forEach(b => {
+                b.x += b.vx;
+                b.y += b.vy;
+
+                if (b.x <= 0 || b.x + b.size >= window.innerWidth) {
+                    b.vx *= -1;
+                    b.x = Math.max(0, Math.min(b.x, window.innerWidth - b.size));
+                }
+                if (b.y <= 0 || b.y + b.size >= window.innerHeight) {
+                    b.vy *= -1;
+                    b.y = Math.max(0, Math.min(b.y, window.innerHeight - b.size));
+                }
+
+                b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener("resize", () => {
+            blobs.forEach(b => {
+                b.x = Math.min(b.x, window.innerWidth - b.size);
+                b.y = Math.min(b.y, window.innerHeight - b.size);
+            });
+        });
+
+        function init() {
+            const categories = parseLinks(LINKS_CONFIG);
+            renderLinks(categories);
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
